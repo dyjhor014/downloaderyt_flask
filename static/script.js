@@ -1,40 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('downloadForm');
+    const socket = io('/download');
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    // Escuchar el evento de progreso
+    socket.on('progress', function(data) {
+        progressBar.style.width = data.progress;
+        progressText.textContent = `Progreso: ${data.progress}`;
+    });
 
-        // Reiniciar barra de progreso y texto
+    document.getElementById('downloadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
         progressBar.style.width = '0%';
         progressText.textContent = 'Progreso: 0%';
-
-        const formData = new FormData(form);
+        const formData = new FormData(event.target);
         fetch('/download', {
             method: 'POST',
             body: formData
         }).then(response => {
             if (response.ok) {
-                checkProgress();  // Inicia la verificación de progreso
+                console.log('Descarga iniciada');
             } else {
                 alert('Error al descargar el video.');
             }
         });
     });
-
-    function checkProgress() {
-        fetch('/progress')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'downloading') {
-                    progressBar.style.width = data.progress;
-                    progressText.textContent = `Progreso: ${data.progress}`;
-                    setTimeout(checkProgress, 1000);  // Repetir después de 1 segundo
-                } else if (data.status === 'finished') {
-                    progressBar.style.width = '100%';
-                    progressText.textContent = 'Descarga completada!';
-                }
-            });
-    }
 });
