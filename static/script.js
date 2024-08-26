@@ -1,34 +1,21 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const socket = io.connect('http://' + document.domain + ':' + location.port + '/');
+var videoIndex = 0;
+var videoPlayer = document.getElementById('videoPlayer');
 
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
+function playNextVideo() {
+    if (videoIndex < playlist.length) {
+        videoPlayer.src = playlist[videoIndex];
+        videoPlayer.play();
+        videoIndex++;
+    } else {
+        // Si la lista de reproducción está vacía, hacer una redirección al backend para eliminar el primer video y recargar
+        window.location.href = "/next_video";
+    }
+}
 
-    // Escuchar el evento de progreso (opcional, en caso de que haya alguna preparación antes de la redirección)
-    socket.on('progress', function(data) {
-        console.log(`Progreso recibido: ${data.progress}`);
-        progressBar.style.width = data.progress;
-        progressText.textContent = `Progreso: ${data.progress}`;
-    });
+// Reproducir el siguiente video cuando el actual termine
+videoPlayer.addEventListener('ended', playNextVideo);
 
-    document.getElementById('downloadForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        progressBar.style.width = '0%';
-        progressText.textContent = 'Progreso: 0%';
-        const formData = new FormData(event.target);
-        fetch('/download', {
-            method: 'POST',
-            body: formData
-        }).then(response => {
-            if (response.redirected) {
-                // Si hay una redirección, navegar automáticamente al enlace de descarga
-                window.location.href = response.url;
-            } else {
-                alert('Error al obtener el enlace de descarga.');
-            }
-        }).catch(error => {
-            console.error('Error durante la solicitud:', error);
-            alert('Ocurrió un error durante la solicitud.');
-        });
-    });
-});
+// Comenzar la reproducción
+if (playlist.length > 0) {
+    playNextVideo();
+}

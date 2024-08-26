@@ -10,7 +10,22 @@
     <form method="post" action="/">
         <label for="youtube_url">Ingresa la URL de YouTube:</label>
         <input type="text" id="youtube_url" name="youtube_url" required>
-        <button type="submit">Reproducir</button>
+        <button type="submit">Agregar a la lista de reproducción</button>
     </form>
+
+    <h2>Lista de Reproducción</h2>
+    <ul id="playlist">
+        {% for video in playlist %}
+            <li>{{ video }}</li>
+        {% endfor %}
+    </ul>
+
+    <video id="videoPlayer" width="600" controls autoplay></video>
+
+    <!-- Cargar el script de JavaScript desde la carpeta static -->
+    <script>
+        var playlist = {{ playlist | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
