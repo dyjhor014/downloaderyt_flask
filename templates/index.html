@@ -1,27 +1,16 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descargar Video de YouTube</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Incluir el cliente de Socket.IO -->
-    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <title>Reproductor de YouTube</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Descargar Video de YouTube</h1>
-        <form id="downloadForm" action="{{ url_for('download_video') }}" method="post">
-            <input type="url" name="url" placeholder="Ingresa la URL del video" required>
-            <button type="submit">Descargar</button>
-        </form>
-        <div class="progress-container">
-            <div id="progress-bar" class="progress-bar"></div>
-        </div>
-        <p id="progress-text">Progreso: 0%</p>
-    </div>
-
-    <!-- Cargar el archivo JavaScript desde la carpeta estática -->
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <h1>Reproductor de YouTube</h1>
+    <form method="post" action="/">
+        <label for="youtube_url">Ingresa la URL de YouTube:</label>
+        <input type="text" id="youtube_url" name="youtube_url" required>
+        <button type="submit">Reproducir</button>
+    </form>
 </body>
 </html>
